@@ -13,7 +13,7 @@ class Player extends Migration
      */
     public function up()
     {
-        Schema::create('player', function (Blueprint $table) {
+        Schema::create('players', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('id_group')->default(0);
             $table->string('display_name');
@@ -28,6 +28,6 @@ class Player extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('player');
+        Schema::dropIfExists('players');
     }
 }
