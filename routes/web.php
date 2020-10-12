@@ -18,3 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::prefix('adminpanel')->middleware('auth')->group(function () {
+    Route::get('/groups', 'AdminPanel\GroupController@index');
+    Route::get('/groups/reset-counters', 'AdminPanel\GroupController@resetCounters');
+});
+
