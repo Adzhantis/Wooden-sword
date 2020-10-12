@@ -41,9 +41,9 @@
                                 <tr>
                                     <td style="width: 40%">{{ $groupLabels[(string)$groupId] }}</td>
                                     <td>{{ $groupStateData->weight }}</td>
-                                    <td>{{ $groupStateData->weightPercent }} %</td>
+                                    <td>{{ round($groupStateData->weightPercent * 100) }} %</td>
                                     <td>{{ $groupStateData->countPlayer }}</td>
-                                    <td>{{ $groupStateData->countPlayerPercent }}</td>
+                                    <td>{{ round($groupStateData->countPlayerPercent * 100) }} %</td>
                                 </tr>
                             @endforeach
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\AutoGroupState;
 use App\Player;
+use App\Services\AutoGroupService;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
@@ -25,7 +27,10 @@ class PlayerController extends Controller
         }
 
         $player = new Player;
+        $chosenGroupId = (new AutoGroupState())->generateIdGroup();
+
         $player->display_name = $displayName;
+        $player->id_group     = $chosenGroupId;
         $player->save();
 
         if ($auto) {
