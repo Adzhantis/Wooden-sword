@@ -8,7 +8,15 @@ use Illuminate\Support\Facades\Storage;
 
 class AutoGroupState
 {
-    const WEIGHT = [1,2,7];
+    /**
+     * array [ id_group => weight]
+     */
+    const WEIGHT = [
+        2 => 3,
+        3 => 4,
+        4 => 6,
+    ];
+
     const FILE   = 'autoGroupsState.txt';
 
     /**
@@ -29,25 +37,18 @@ class AutoGroupState
      */
     public function reset(): void
     {
-        $weightSum      = array_sum(self::WEIGHT);
-        $weightCount    = count(self::WEIGHT);
+        $stateData['values'] = $this->getValuesForGroupIds();
 
-        $groups = DB::table('groups')->limit($weightCount)->get()->toArray();
-
-        $stateData['values'] = $this->getValuesForGroupIds($groups);
-
-        foreach (self::WEIGHT as $weightSingle) {
-            $group = array_shift($groups);
-            $stateData['autoGroups'][$group->id] = [
+        foreach (self::WEIGHT as $id_group => $weightSingle) {
+            $stateData['autoGroups'][$id_group] = [
                 'weight'             => $weightSingle,
-                'weightPercent'      => $weightSingle / $weightSum,
                 'countPlayer'        => 0,
                 'countPlayerPercent' => 0,
             ];
         }
 
         $stateData['total'] = [
-            'weight'      => $weightSum,
+            'weight'      => array_sum(self::WEIGHT),
             'countPlayer' => 0,
         ];
 
@@ -75,11 +76,6 @@ class AutoGroupState
         $chosenGroup->countPlayer += 1;
         $autoGroupsState->total->countPlayer += 1;
 
-        //get  player percent
-        foreach ($autoGroupsState->autoGroups as $idGroup => $autoGroup) {
-            $autoGroup->countPlayerPercent = $autoGroup->countPlayer / $autoGroupsState->total->countPlayer;
-        }
-
         $autoGroupsState->autoGroups->$chosenGroupId = $chosenGroup;
 
         $autoGroupsState->values = $values;
@@ -90,19 +86,18 @@ class AutoGroupState
     }
 
     /**
-     * @param array $groups
      * @return array
      */
-    private function getValuesForGroupIds(array $groups): array
+    private function getValuesForGroupIds(): array
     {
         $values = [];
         $sum = 0;
         $i = 1;
 
-        foreach (self::WEIGHT as $key => $groupValuesCount) {
+        foreach (self::WEIGHT as $idGroup => $groupValuesCount) {
             $sum += $groupValuesCount;
             do {
-                $values[$i] = $groups[$key]->id;
+                $values[$i] = $idGroup;
                 $i++;
 
             } while ($i <= $sum);
